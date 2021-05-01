@@ -1,0 +1,8 @@
+{
+  "autoload": {
+    "psr-4": {"TimeClock\\": "lib/TimeClock"}
+  },
+  "require": {
+    "phpunit/phpunit": "6"
+  }
+}
