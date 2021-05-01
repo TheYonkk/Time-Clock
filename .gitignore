@@ -1,0 +1,13 @@
+# stuff might go here, maybe
+
+*.DS_Store
+
+
+#PHPStorm stuffs
+.idea
+vendor
+node_modules
+composer.phar
+
+.timeclock.vpp.lck
+timeclock.vpp.bak_*
