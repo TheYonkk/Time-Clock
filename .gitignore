@@ -9,5 +9,5 @@ vendor
 node_modules
 composer.phar
 
-.timeclock.vpp.lck
-timeclock.vpp.bak_*
+.Time Clock.vpp.lck
+Time Clock.vpp.bak_*
