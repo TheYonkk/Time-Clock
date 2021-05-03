@@ -1,5 +1,5 @@
 <?php
-
+require 'lib/site.inc.php';
 ?>
 
 
