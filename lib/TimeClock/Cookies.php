@@ -68,8 +68,6 @@ from $table
 where userid=?
 SQL;
 
-    echo("validating\n");
-
     $stmt = $this->pdo()->prepare($sql);
     $ret = $stmt->execute([$user]);
 
@@ -82,10 +80,6 @@ SQL;
     foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
       $salt = $row['salt'];
       $hash = $row['hash'];
-
-        echo("salt: " . $salt . "\n");
-        echo("hash: " . $hash . "\n");
-        echo("calculated: " . hash("sha256", $token . $salt) . "\n");
 
       if ($hash === hash("sha256", $token . $salt)) {
         return $hash;

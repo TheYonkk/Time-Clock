@@ -4,7 +4,7 @@ require 'lib/site.inc.php';
 
 
 
-$view = new TimeClock\UserView($site);
+$view = new TimeClock\UserView($site, $_GET);
 
 ?>
 

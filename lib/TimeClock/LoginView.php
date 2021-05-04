@@ -14,6 +14,10 @@ class LoginView extends View
             $this->error = True;
         }
 
+        if (isset($session[User::SESSION_NAME])){
+            unset($session[User::SESSION_NAME]);
+        }
+
         // if someone is at the login page, we want to log them out
         if(isset($cookie[LOGIN_COOKIE]) && $cookie[LOGIN_COOKIE] != "") {
             $cookie = json_decode($cookie[LOGIN_COOKIE], true);
@@ -33,27 +37,46 @@ class LoginView extends View
 
         $html = "";
 
-        if ($this->error){
-            $msg = $this->session['error'];
-            $html .= "<p class=\"msg\">$msg</p>";
-        }
+
 
 
         $html .= <<<HTML
-    <form class="form-signin text-center" method="post" action="post/login.php">
-      <img class="mb-4" src="images/SR_Badge.svg" alt="" width="72" height="72">
-      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-      <label for="inputEmail" class="sr-only">Email address</label>
-      <input type="email" id="email" name="email" class="form-control" placeholder="Email address" required="" autofocus="">
-      <label for="inputPassword" class="sr-only">Password</label>
-      <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="">
-      <div class="checkbox mb-3">
-        <label>
-          <input type="checkbox" name="keep" id="keep" value="keep"> Remember me
-        </label>
-      </div>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-    </form>
+    
+    <main class="form-signin">
+  <form  method="post" action="post/login.php">
+    <img class="mb-4" src="images/SR_Badge.svg" alt="" width="72" height="73">
+    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+HTML;
+
+        if ($this->error) {
+            $msg = $this->session['error'];
+            $html .= <<<HTML
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <strong>Error!</strong> $msg
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+HTML;
+        }
+
+        $html .= <<<HTML
+
+    <div class="form-floating">
+      <input type="email" name="email" class="form-control" id="floatingInput" placeholder="sparty@msu.edu">
+      <label for="floatingInput">Email address</label>
+    </div>
+    <div class="form-floating">
+      <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
+      <label for="floatingPassword">Password</label>
+    </div>
+
+    <div class="checkbox mb-3">
+      <label>
+        <input type="checkbox" value="remember-me" name="keep" value="keep"> Remember me
+      </label>
+    </div>
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+  </form>
+</main>
 
 HTML;
 

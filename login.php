@@ -11,14 +11,15 @@ $view = new TimeClock\LoginView($site, $_SESSION, $_GET, $_COOKIE);
 <?php echo $view->head(); ?>
 </head>
 
-<body>
-<div class="login">
+<body class="login text-center">
 
-    <?php echo $view->header();
+    <?
     echo $view->presentForm();
-    echo $view->footer(); ?>
 
-</div>
+    // must go last
+    echo $view->boostrapJS();
+    ?>
+
 
 </body>
 </html>
