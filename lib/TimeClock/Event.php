@@ -21,7 +21,7 @@ class Event
         $this->in = strtotime( $row["in"] );
 
         if (!is_null($row["out"])){
-            strtotime( $row["out"] );
+            $this->out = strtotime( $row["out"] );
         }
 
     }

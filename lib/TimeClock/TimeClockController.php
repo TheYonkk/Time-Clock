@@ -15,13 +15,10 @@ class TimeClockController
      */
     public function __construct(Site $site, array &$session, array $post) {
 
-        $root = $site->getRoot();
-
-        // redirect to index
-        $this->redirect = "$root/";
 
         // if neither in or out are set, do nothing
         if (!isset($post['clock'])){
+            $this->result = json_encode(['ok' => false, 'message' => "You must select an option."]);
             return;
         }
 
@@ -30,8 +27,28 @@ class TimeClockController
         $events = new Events($site);
 
         if ($clock === "in"){
+
+            // check to see if the user has an open session without a clock-out
+            $lastEvent = $events->getLastEvent($user);
+
+            // if the last event does not have a clock out and the override option is not set
+            if (!is_null($lastEvent) && is_null($lastEvent->getClockOut()) && !isset($post['override'])){
+                $this->result = json_encode(['ok' => false, 'enableOverride' => true, 'message' => 'You have an open time session 
+                that was started on <strong>' . date("m/d/Y", $lastEvent->getClockIn()) . "</strong> at <strong>" .
+                    date("h:i A", $lastEvent->getClockIn()) . "</strong>! Did you forget to clock out?"]);
+                return;
+            }
+
             $success = $events->clockIn($user);
 
+            if ($success) {
+                $this->result = json_encode(['ok' => true, 'message' => 'Clock in successful!']);
+                return;
+
+            } else {
+                $this->result = json_encode(['ok' => false, 'enableOverride' => false, 'message' => 'There was a problem clocking you in.']);
+                return;
+            }
 
         } else if ($clock === "out"){
 
@@ -41,9 +58,24 @@ class TimeClockController
             if (!is_null($lastEvent) && is_null($lastEvent->getClockOut())){
                 $lastEvent->setClockOut(); // clock out at the current time
                 $success = $events->update($lastEvent);
+
+                if ($success) {
+                    $this->result = json_encode(['ok' => true, 'message' => 'Clock out successful!']);
+                    return;
+                } else {
+                    $this->result = json_encode(['ok' => false,  'enableOverride' => false, 'message' => 'There was a problem clocking you out.']);
+                    return;
+                }
+
+            // no active session to clock out
+            } else {
+                $this->result = json_encode(['ok' => false, 'enableOverride' => false, 'message' => 'You do not have an active session!']);
+                return;
             }
 
         }
+
+        $this->result = json_encode(['ok' => false,  'enableOverride' => false, 'message' => 'Uncaught error!']);
 
 
     }
@@ -51,12 +83,12 @@ class TimeClockController
     /**
      * @return string
      */
-    public function getRedirect()
+    public function getResult()
     {
-        return $this->redirect;
+        return $this->result;
     }
 
 
-    private $redirect;	// Page we will redirect the user to.
+    private $result; // ajax result encoded in JSON
 
 }

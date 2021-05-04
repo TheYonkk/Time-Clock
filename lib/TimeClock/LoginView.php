@@ -44,7 +44,7 @@ class LoginView extends View
     
     <main class="form-signin">
   <form  method="post" action="post/login.php">
-    <img class="mb-4" src="images/SR_Badge.svg" alt="" width="72" height="73">
+    <img class="mb-4" src="dist/img/SR_Badge.svg" alt="" width="72" height="73">
     <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 HTML;
 

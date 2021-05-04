@@ -20,20 +20,7 @@ class TimeClockView extends View
 
     public function presentForm() {
 
-        $html = "";
-
-        if ($this->error){
-            $msg = $this->session['error'];
-            $html .= <<<HTML
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-  <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-HTML;
-
-        }
+        $html = "<div id='message'></div>";
 
         $user = $_SESSION[User::SESSION_NAME];
         $name = $user->getName();
@@ -42,8 +29,8 @@ HTML;
         $html .= <<<HTML
     
     <main class="form-timeclock">
-  <form  method="post" action="post/timeclock.php">
-    <img class="mb-4" src="images/SR_Badge.svg" alt="" width="72" height="73">
+  <form id="timeclock">
+    <img class="mb-4" src="dist/img/SR_Badge.svg" alt="" width="72" height="73">
     <h1 class="h3 mb-1 fw-normal">Hello, $name</h1>
     <p class="">Not you? <a href="login.php">Sign out</a>.</p>
 
@@ -53,6 +40,12 @@ HTML;
 
         <input type="radio" class="btn-check" name="clock" value="out" id="danger-outlined" autocomplete="off">
         <label class="btn btn-outline-danger my-2 w-100" for="danger-outlined">Clock out</label>
+    </div>
+    
+    <div class="checkbox mb-3 clock-override">
+      <label>
+        <input type="checkbox" value="override" name="override" value="override"> Override error?
+      </label>
     </div>
 
     <div class="form-floating">

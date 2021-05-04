@@ -113,7 +113,4 @@ SQL;
 
     }
 
-    public function clockOut(User $user){
-        return $this->getLastEvent($user);
-    }
 }

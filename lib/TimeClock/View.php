@@ -59,6 +59,9 @@ HTML;
 
 <!-- <script src="dist/main.js"></script> -->
 <link rel="stylesheet" href="lib/timeclock.css">
+
+<!-- custom JS -->
+<script src="dist/main.js"></script>
 HTML;
 	}
 
