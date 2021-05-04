@@ -26,6 +26,27 @@ class Event
 
     }
 
+    public function __toString(): string
+    {
+        $arr = array("id"=>$this->id, "userID"=>$this->userID, "notes"=>$this->notes,
+            "in"=>$this->getClockInStr(), "out"=>$this->getClockOutStr());
+        return print_r($arr);
+
+    }
+
+    public function getClockInStr() : string {
+        return date("Y-m-d H:i:s", $this->in);
+    }
+
+    public function getClockOutStr() : string {
+        if (is_null($this->out)){
+            return "";
+        } else {
+            return date("Y-m-d H:i:s", $this->out);
+        }
+    }
+
+
     /**
      * @return mixed
      */
@@ -99,10 +120,13 @@ class Event
     }
 
     /**
-     * @param time|null $out
+     * @param time|null $out if out is null, the current time is used
      */
-    public function setClockOut($out)
+    public function setClockOut($out=null)
     {
+        if (is_null($out)){
+            $out = time();
+        }
         $this->out = $out;
     }
 

@@ -48,11 +48,11 @@ HTML;
     <p class="">Not you? <a href="login.php">Sign out</a>.</p>
 
     <div>
-        <input type="radio" class="btn-check" name="options-outlined" id="success-outlined" autocomplete="off">
+        <input type="radio" class="btn-check" name="clock" value="in" id="success-outlined" autocomplete="off">
         <label class="btn btn-outline-success my-1 w-100" for="success-outlined">Clock in</label>
 
-        <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off">
-        <label class="btn btn-outline-danger my-2 w-100" for="danger-outlined">Clock Out</label>
+        <input type="radio" class="btn-check" name="clock" value="out" id="danger-outlined" autocomplete="off">
+        <label class="btn btn-outline-danger my-2 w-100" for="danger-outlined">Clock out</label>
     </div>
 
     <div class="form-floating">
