@@ -9,16 +9,12 @@ $view = new TimeClock\PasswordValidateView($site, $_GET, $_SESSION);
     <?php echo $view->head(); ?>
 </head>
 
-<body>
-<div class="password">
+<body class="password text-center">
 
     <?php
-    echo $view->header();
     echo $view->present();
-    echo $view->footer();
+    echo $view->boostrapJS();
     ?>
-
-</div>
 
 </body>
 </html>

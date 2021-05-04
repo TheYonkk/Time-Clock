@@ -112,16 +112,44 @@ SQL;
 
         $from = $this->site->getEmail();
         $name = $user->getName();
+        $root = $this->site->getRoot();
 
         $subject = "Confirm your email";
         $message = <<<MSG
 <html>
-<p>Greetings, $name,</p>
+<head>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+</head>
+<body>
+<div id="email">
+<h1>Greetings, $name,</h1>
 
-<p>Welcome to Jolly. In order to complete your registration,
-please verify your email address by visiting the following link:</p>
+<p>An account has been created for you on the Jolly Rd. shop time clock, <a href="http://webdev.cse.msu.edu$root">webdev.cse.msu.edu$root</a>.</p>
 
-<p><a href="$link">$link</a></p>
+<p><a class="btn btn-primary" href="$link">Finish account setup.</a></p>
+<p class="text-secondary">Please note: this link is unique to you.</p>
+</div>
+</body>
+
+<style>
+
+html, body {
+  display: flex;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+
+#email {
+    width: 100%;
+    max-width: 500px;
+    padding: 15px;
+    margin: auto;
+}
+  
+</style>
 </html>
 MSG;
         $headers = "MIME-Version: 1.0\r\nContent-type: text/html; charset=iso=8859-1\r\nFrom: $from\r\n";
