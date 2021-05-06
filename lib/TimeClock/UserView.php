@@ -22,6 +22,12 @@ class UserView extends View
         } else {
             $this->setTitle("Create an Account");
         }
+
+        $root = $site->getRoot();
+        $this->addLink("$root/admin.php", "Home");
+        $this->addLink("$root/users.php", "Users");
+        $this->addLink("$root/user.php", "New user", True);
+        $this->addLink("$root/login.php", "Log out");
     }
 
 
@@ -30,7 +36,7 @@ class UserView extends View
         $users = new Users($this->site);
         $user = $users->get($this->userid);
 
-        $html = "<form method=\"post\" action=\"post/user.php\">";
+        $html = "<main class='mt-auto py-3'><div class='container'><div class='row justify-content-center'><form class='col-6' method=\"post\" action=\"post/user.php\">";
 
         if (!is_null($user)){
             $name = $user->getName();
@@ -48,18 +54,18 @@ class UserView extends View
 
 
       $html .= <<<HTML
-    <div class="form-group">
+    <div class="form-group py-2">
         <label for="name">Full name</label>
         <input type="input" class="form-control" id="name"  name="name" placeholder="Sparty McSpartan" value="$name">
     </div>
 
-    <div class="form-group">
+    <div class="form-group py-2">
         <label for="email">MSU email</label>
         <input type="email" class="form-control" id="email" name="email" area-describedby="emailHelp" placeholder="sparty@msu.edu" value="$email">
         <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
     </div>
     
-    <div class="form-group">
+    <div class="form-group py-2">
         
         <label for="group">Group</label>
         <select class="form-control" id="group" name="group">
@@ -94,7 +100,7 @@ HTML;
         </select>
     </div>  
     
-    <div class="form-group">
+    <div class="form-group py-2">
     <label for="role">Role</label>
         <select class="form-control" id="role" name="role">
 HTML;
@@ -117,12 +123,15 @@ HTML;
         </select>
     </div> 
     
-    <div class="form-group">
+    <div class="form-group  my-5">
         <button type="submit" class="btn btn-success">Submit</button>
         <button type="submit" class="btn btn-danger">Cancel</button>
     </div>
   
 </form>
+</div>
+</div>
+</main>
 HTML;
 
       return $html;

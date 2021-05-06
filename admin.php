@@ -1,6 +1,6 @@
 <?php
 require 'lib/site.inc.php';
-$view = new TimeClock\UsersView($site, $user);
+$view = new TimeClock\AdminView($site, $user);
 
 if(!$view->protect($site, $user)) {
     header("location: " . $view->getProtectRedirect());

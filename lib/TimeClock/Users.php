@@ -105,7 +105,6 @@ SQL;
         $validator = $validators->newValidator($id);
 
 
-
         // Send email with the validator in it
         $link = "http://webdev.cse.msu.edu"  . $this->site->getRoot() .
             '/password-validate.php?v=' . $validator;
@@ -154,6 +153,75 @@ html, body {
 MSG;
         $headers = "MIME-Version: 1.0\r\nContent-type: text/html; charset=iso=8859-1\r\nFrom: $from\r\n";
         $mailer->mail($user->getEmail(), $subject, $message, $headers);
+
+
+    }
+
+
+
+    /**
+     * Generate a password reset for a user
+     * @param int $userID the user ID
+     * @param Email $mailer An Email object to use
+     * @return null on success or error message if failure
+     */
+    public function passwordResetRequest($userID, $mailer){
+
+        $user = $this->get($userID);
+
+        // Create a validator and add to the validator table
+        $validators = new Validators($this->site);
+        $validator = $validators->newValidator($userID);
+
+        // Send email with the validator in it
+        $link = "http://webdev.cse.msu.edu"  . $this->site->getRoot() .
+            '/password-validate.php?v=' . $validator;
+
+        $from = $this->site->getEmail();
+        $name = $user->getName();
+        $root = $this->site->getRoot();
+
+        $subject = "Reset your password";
+        $message = <<<MSG
+<html>
+<head>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+</head>
+<body>
+<div id="email">
+<h1>Greetings, $name,</h1>
+
+<p>A Time Clock site administrator has generated a password reset link for you. Click the link below to set a new password for your account.</p>
+
+<p><a class="btn btn-primary" href="$link">Reset password.</a></p>
+<p class="text-secondary">Please note: this link is unique to you. If you did not request a password reset, you may disregard this email.</p>
+</div>
+</body>
+
+<style>
+
+html, body {
+  display: flex;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+
+#email {
+    width: 100%;
+    max-width: 500px;
+    padding: 15px;
+    margin: auto;
+}
+  
+</style>
+</html>
+MSG;
+        $headers = "MIME-Version: 1.0\r\nContent-type: text/html; charset=iso=8859-1\r\nFrom: $from\r\n";
+        $mailer->mail($user->getEmail(), $subject, $message, $headers);
+
     }
 
 
@@ -219,58 +287,33 @@ SQL;
     }
 
 
+    /**
+     * Permanently deletes a user
+     * @param int $userid to delete
+     * @return true upon successful deleting
+     */
+    public function delete($userid){
+        $sql =<<<SQL
+DELETE FROM $this->tableName
+WHERE id=?
+SQL;
 
-//    public function getClients(){
-//
-//        $sql =<<<SQL
-//SELECT id, name from $this->tableName
-//WHERE role="c"
-//SQL;
-//
-//        $pdo = $this->pdo();
-//        $statement = $pdo->prepare($sql);
-//
-//        try {
-//            $ret = $statement->execute(array());
-//        } catch(\PDOException $e){
-//            return False;
-//        }
-//
-//        if ($ret == False){
-//            return array();
-//        } else if($statement->rowCount() === 0) {
-//            return array();
-//        } else {
-//            return $statement->fetchAll(\PDO::FETCH_ASSOC);
-//        }
-//
-//    }
-//
-//    public function getAgents(){
-//
-//        $sql =<<<SQL
-//SELECT id, name from $this->tableName
-//WHERE role="A" or role="S"
-//SQL;
-//
-//        $pdo = $this->pdo();
-//        $statement = $pdo->prepare($sql);
-//
-//        try {
-//            $ret = $statement->execute(array());
-//        } catch(\PDOException $e){
-//            return False;
-//        }
-//
-//        if ($ret == False){
-//            return array();
-//        } else if($statement->rowCount() === 0) {
-//            return array();
-//        } else {
-//            return $statement->fetchAll(\PDO::FETCH_ASSOC);
-//        }
-//
-//    }
+        $info = array($userid);
+
+        $pdo = $this->pdo();
+        $statement = $pdo->prepare($sql);
+
+        try {
+            $ret = $statement->execute($info);
+        } catch(\PDOException $e){
+            return False;
+        }
+
+        // if the delete failed, 0 rows will be affected
+        return $statement->rowCount() !== 0;
+
+
+    }
 
 
     /**

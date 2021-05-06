@@ -7,8 +7,12 @@ namespace TimeClock;
 class TimeClockView extends View
 {
 
-    public function __construct($site, &$session, $get){
+    public function __construct($site, $user, &$session, $get){
+
+        parent::__construct($site);
+
         $this->session = $session;
+        $this->user = $user;
 
         if (isset($get['e'])){
             $this->error = True;
@@ -60,6 +64,35 @@ HTML;
         return $html;
     }
 
+    /**
+     * Display a footer only if the user in an admin
+     * @param User $user The current user
+     * @return string the footer (if any)
+     */
+    public function footer(){
+
+        $root = $this->site->getRoot();
+
+
+            $html = <<<HTML
+<footer class="footer mt-auto py-3">
+  <div class="container"><p><span class="text-muted">
+HTML;
+            if ($this->user->isStaff()){
+                $html .= "<a href='$root/admin.php'>Site administration</a> | ";
+            }
+
+            $html .= <<<HTML
+    &copy; Dave Yonkers</span></p>
+  </div>
+</footer>
+HTML;
+
+
+            return $html;
+    }
+
+    private $user;
     private $session;
     private $error = False;
 

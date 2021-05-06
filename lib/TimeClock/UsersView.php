@@ -10,11 +10,19 @@ class UsersView extends View {
      * Constructor
      * Sets the page title and any other settings.
      * @param Site $site The Site object
+     * @param user $user The current user
      */
-    public function __construct(Site $site) {
+    public function __construct(Site $site, User $user) {
         $this->site = $site;
+        $this->user = $user;
 
         $this->setTitle("Users");
+
+        $root = $site->getRoot();
+        $this->addLink("$root/admin.php", "Home");
+        $this->addLink("$root/users.php", "Users", True);
+        $this->addLink("$root/user.php", "New user");
+        $this->addLink("$root/login.php", "Log out");
     }
 
     /**
@@ -23,12 +31,16 @@ class UsersView extends View {
      */
     public function present() {
         $html = <<<HTML
-<form method="post" action="post/users.php">
-    <p>
-    <input class="btn btn-primary" type="submit" name="add" id="add" value="Add">
-    <input class="btn btn-secondary" type="submit" name="edit" id="edit" value="Edit">
-    <input class="btn btn-danger" type="submit" name="delete" id="delete" value="Delete">
-    </p>
+<main class="mt-auto py-3">
+<div class="container">
+
+<div class="row">
+<div class="col">
+<div id="message"></div>
+</div>
+</div>
+
+<div id="users">
 
     <table class="table">
     <thead>
@@ -71,7 +83,22 @@ HTML;
 
             $html .= <<<HTML
         <tr>
-            <td><input type="radio" name="user" value="$id"></td>
+        <div class="row">
+            <td class="col-4">
+            <div class="btn-group-sm">
+            <button class="btn btn-secondary mx-1" type="button" name="edit" id="edit" value="$id">Edit</button>
+            <button class="btn btn-warning mx-1" type="button" name="reset-password" id="reset-password" value="$id">Send password reset</button>
+HTML;
+
+            // do not let a user delete themselves
+            if ($this->user->getId() !== $id){
+                $html .= "<button class='btn btn-danger mx-1' type='button' name='delete' id='delete' value='$id'>Delete</button>";
+            }
+
+            $html .= <<<HTML
+            </div>
+            </td>
+            </div>
             <td>$name</td>
             <td>$email</td>
             <td>$groupstr</td>
@@ -85,10 +112,14 @@ HTML;
         $html .= <<<HTML
         </tbody>
     </table>
-</form>
+</div>
+</div>
+</main>
 HTML;
 
         return $html;
     }
+
+    private $user;
 
 }

@@ -109,8 +109,100 @@ SQL;
         $id = $this->pdo()->lastInsertId();
         return true;
 
+    }
+
+    public function downloadDateRange($start, $end){
+
+        $startStr = date("Y-m-d H:i", $start);
+        $endStr = date("Y-m-d H:i", $end);
+
+        $users = new Users($this->site);
+        $usersTable = $users->getTableName();
+
+        $sql = <<<SQL
+SELECT name,email,`in`,`out`,notes
+FROM $this->tableName
+INNER JOIN $usersTable
+ON userid = $usersTable.id
+WHERE (`in` >= ? ) AND (`in` <= ? OR `out` <= ? )
+SQL;
 
 
+        $pdo = $this->pdo();
+        $statement = $pdo->prepare($sql);
+
+        $statement->execute(array($startStr, $endStr, $endStr));
+        if($statement->rowCount() === 0) {
+            return false;
+        }
+
+
+        //Fetch all of the rows from our MySQL table.
+        $rows = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
+        //Get the column names.
+        $columnNames = array();
+        if(!empty($rows)){
+            //We only need to loop through the first row of our result
+            //in order to collate the column names.
+            $firstRow = $rows[0];
+            foreach($firstRow as $colName => $val){
+                $columnNames[] = $colName;
+            }
+        }
+
+        //Setup the filename that our CSV will have when it is downloaded.
+        $startF = date("Y-m-d_H-i", $start);
+        $endF = date("Y-m-d_H-i", $end);
+        $fileName = "timeclock_$startF" . "_to_" . "$endF.csv";
+
+        //Set the Content-Type and Content-Disposition headers to force the download.
+        header('Content-Type: application/excel');
+        header('Content-Disposition: attachment; filename="' . $fileName . '"');
+
+        //Open up a file pointer
+        $fp = fopen('php://output', 'w');
+
+        //Start off by writing the column names to the file.
+        fputcsv($fp, $columnNames);
+
+        //Then, loop through the rows and write them to the CSV file.
+        foreach ($rows as $row) {
+            fputcsv($fp, $row);
+        }
+
+        //Close the file pointer.
+        fclose($fp);
+
+        return true;
+    }
+
+    public function getEarliestDate(){
+        $sql = <<<SQL
+SELECT `in`,`out`
+from $this->tableName
+ORDER BY `in` ASC LIMIT 1
+SQL;
+
+        $pdo = $this->pdo();
+        $statement = $pdo->prepare($sql);
+
+        $now = time();
+
+        try {
+            $ret = $statement->execute(array());
+        } catch(\PDOException $e){
+            return $now;
+        }
+
+        if ($ret == False){
+            return $now;
+        } else if($statement->rowCount() === 0) {
+            return $now;
+        } else {
+            $row = $statement->fetch(\PDO::FETCH_ASSOC);
+            return strtotime( $row["in"] );
+        }
     }
 
 }

@@ -13,6 +13,8 @@ class View {
 	 */
 	public function __construct(Site $site) {
 		$this->site = $site;
+
+
 	}
 
     /**
@@ -20,9 +22,63 @@ class View {
      * @return string HTML for the standard page header
      */
     public function header() {
-        $html = '<header class="main">';
-        $html .= "<h1>$this->title</h1>";
-        $html .= '</header>';
+        $root = $this->site->getRoot();
+
+        $html = <<<HTML
+<div class="container">
+  <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+    <a href="$root" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+      <img class="bi me-2" width="40" height="40" src="dist/img/SR_Badge.svg">
+      <span class="fs-4">Time Clock</span>
+    </a>
+    
+HTML;
+
+        if(count($this->links) > 0) {
+            $html .= '<ul class="nav nav-pills">';
+            foreach($this->links as $link) {
+
+                $active = $link['active'] ? 'active':'';
+
+                $html .= '<li class="nav-item"><a href="' .
+                    $link['href'] . '" class="nav-link ' .
+                    $active . '">' .
+                    $link['text'] . '</a></li>';
+            }
+            $html .= '</ul>';
+        }
+
+        $html .= <<<HTML
+  </header>
+  <div class="container text-center">
+        <div class="row my-2">
+            <div class="col-3"></div>
+            <div class="col-6">
+                <h1>$this->title</h1>
+            </div>
+            <div class="col-3"></div>
+        </div>
+HTML;
+
+        if ($this->blurb !== ""){
+            $html .= <<<HTML
+    <div class="row my-2">
+    <div class="col-3"></div>
+        <div class="col-6">
+            <p>$this->blurb</p>
+        </div>
+        <div class="col-3"></div>
+    </div>
+HTML;
+
+        }
+
+        $html .= <<<HTML
+    
+  </div>
+</div>
+HTML;
+
 
         return $html;
     }
@@ -36,7 +92,11 @@ class View {
     public function footer()
     {
         return <<<HTML
-<footer><p>Copyright © 2021 Dave Yonkers. All rights reserved.</p></footer>
+<footer class="footer mt-auto py-3 bg-light">
+  <div class="container">
+    <span class="text-muted">&copy; Dave Yonkers</span>
+  </div>
+</footer>
 HTML;
     }
 
@@ -81,14 +141,53 @@ HTML;
 	 * Get the redirect location link.
 	 * @return page to redirect to.
 	 */
-	public function getRedirect() {
-		return $this->redirect;
+	public function getProtectRedirect() {
+		return $this->protectRedirect;
 	}
+
+    /**
+     * Add a link to the navbar
+     * @param string $href the link
+     * @param string $text the text to display
+     * @param Boolean $active If the link should be shown as active
+     */
+	public function addLink($href, $text, $active=False){
+        $this->links[] = ["href" => $href, "text" => $text, "active" => $active];
+    }
+
+    /**
+     * Protect a page for staff only access
+     *
+     * If access is denied, call getProtectRedirect
+     * for the redirect page
+     * @param $site The Site object
+     * @param $user The current User object
+     * @return bool true if page is accessible
+     */
+    public function protect($site, $user) {
+        if($user->isStaff()) {
+            return true;
+        }
+
+        $this->protectRedirect = $site->getRoot() . "/";
+        return false;
+    }
+
+
+    /**
+     * The blurb, or, more formally, page description
+     * @param $blurb
+     */
+    public function setBlurb($blurb){
+        $this->blurb = $blurb;
+    }
 
 
 
 	protected $site;		///< The Site object
 	private $title = "";	///< The page title
+    private $blurb = "";
+    private $links = array();
 
-	protected $redirect = null;	///< Optional redirect?
+	protected $protectRedirect = null;	///< Optional redirect?
 }

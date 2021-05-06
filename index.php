@@ -1,7 +1,7 @@
 <?php
 //$open = true;
 require 'lib/site.inc.php';
-$view = new TimeClock\TimeClockView($site, $_SESSION, $_GET);
+$view = new TimeClock\TimeClockView($site, $user, $_SESSION, $_GET);
 ?>
 
 <!DOCTYPE html>
@@ -15,6 +15,7 @@ $view = new TimeClock\TimeClockView($site, $_SESSION, $_GET);
 
     <?php
     echo $view->presentForm();
+    echo $view->footer();
     ?>
 
 

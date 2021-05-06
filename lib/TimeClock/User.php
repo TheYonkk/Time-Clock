@@ -48,6 +48,7 @@ class User
     return $this->id;
   }
 
+
   /**
    * @return mixed
    */

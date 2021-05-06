@@ -10980,6 +10980,131 @@ const TimeClock = function(sel){
 
 /***/ }),
 
+/***/ "./src/Users.js":
+/*!**********************!*\
+  !*** ./src/Users.js ***!
+  \**********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Users": () => (/* binding */ Users)
+/* harmony export */ });
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _parse_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./parse_json */ "./src/parse_json.js");
+
+
+
+
+function alertSuccess(selector, msg){
+    selector.html("<div class=\"alert alert-success\" role=\"alert\">" + msg + "</div>")
+        .hide().slideDown(1000).delay(2000).slideUp(1000);
+}
+
+function alertWarning(selector, msg){
+    selector.html("<div class=\"alert alert-danger\" role=\"alert\">" + msg + "</div>")
+        .hide().slideDown(1000).delay(5000).slideUp(1000);
+}
+
+function alertError(selector, msg){
+    selector.html("<div class=\"alert alert-danger\" role=\"alert\"><strong>Error!</strong> " + msg + "</div>")
+        .hide().slideDown(1000).delay(5000).slideUp(1000);
+}
+
+const Users = function(sel){
+
+    var page = jquery__WEBPACK_IMPORTED_MODULE_0___default()(sel);
+
+    var buttons = page.find("button");    // All of the form's edit buttons
+    for(var b=0; b<buttons.length; b++){
+        // Get a button
+        var button = jquery__WEBPACK_IMPORTED_MODULE_0___default()(buttons.get(b));
+
+        var action = jquery__WEBPACK_IMPORTED_MODULE_0___default()(button).attr("name");
+
+        // Determine the user ID
+        var id = button.val();
+        console.log(action + " " + id);
+
+        installButtonListener(button, id, action);
+    }
+
+
+    function installButtonListener(button, userID, action){
+
+        button.click(function(){
+
+            console.log("clicked");
+
+            var data = {
+                "user":userID,
+                "action":action
+            };
+
+            jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+                url: "post/users.php",
+                data: data,
+                method: "POST",
+                success: function(data) {
+                    var json = (0,_parse_json__WEBPACK_IMPORTED_MODULE_1__.parse_json)(data);
+                    if(json.ok) {
+
+                        // success
+
+                        // user wanted to delete
+                        if (json.action === "delete"){
+
+                            alertWarning(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#message"), json.message);
+                            installButtonListener(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#confirm-delete"), userID, "confirm-delete");
+
+                        } else if (json.action === "edit") {
+                            // user wanted to edit
+                            window.location.assign(json.page);
+
+                        } else if (json.action === "confirm-delete"){
+                            if (json.success){
+                                alertSuccess(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#message"), json.message);
+                            } else {
+                                alertError(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#message"), json.message);
+                            }
+
+                        } else if (json.action === "reset-password"){
+                            if (json.success){
+                                alertSuccess(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#message"), json.message);
+                            } else {
+                                alertError(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#message"), json.message);
+                            }
+                        }
+
+
+                    } else {
+                        // failure
+                        alertError(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#message"), json.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+
+                    alertError(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#message"), error);
+
+                }
+            });
+        });
+    }
+
+
+    function installConfirmDeleteListener(selector){
+        selector.click(function(){
+           console.log("confirm?");
+        });
+    }
+
+
+}
+
+/***/ }),
+
 /***/ "./src/parse_json.js":
 /*!***************************!*\
   !*** ./src/parse_json.js ***!
@@ -11080,19 +11205,24 @@ var __webpack_exports__ = {};
   \**********************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _TimeClock__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TimeClock */ "./src/TimeClock.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _Users__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Users */ "./src/Users.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_2__);
 // import './_noir.scss';
-// import {Login} from './Login';
-// import {Stars} from "./stars";
-// import {MovieInfo} from "./MovieInfo";
 
 
 
 
-jquery__WEBPACK_IMPORTED_MODULE_1___default()(document).ready(function() {
+
+
+jquery__WEBPACK_IMPORTED_MODULE_2___default()(document).ready(function() {
     new _TimeClock__WEBPACK_IMPORTED_MODULE_0__.TimeClock('#timeclock');
 });
+
+jquery__WEBPACK_IMPORTED_MODULE_2___default()(document).ready(function() {
+    new _Users__WEBPACK_IMPORTED_MODULE_1__.Users('#users');
+});
+
 })();
 
 /******/ })()

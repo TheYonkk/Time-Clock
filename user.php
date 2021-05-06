@@ -2,9 +2,12 @@
 //$open = true;
 require 'lib/site.inc.php';
 
-
-
 $view = new TimeClock\UserView($site, $_GET);
+
+if(!$view->protect($site, $user)) {
+    header("location: " . $view->getProtectRedirect());
+    exit;
+}
 
 ?>
 

@@ -14,23 +14,94 @@ class UsersController {
      * @param array $post $_POST
      */
     public function __construct(Site $site, User $user, array $post) {
-        $root = $site->getRoot();
-        $this->redirect = "$root/user.php";
 
-        // if we're editing
-        if (isset($post['edit']) and isset($post['user'])){
-            $this->redirect .= "?id=" . strip_tags($post['user']);
+        $root = $site->getRoot();
+
+        if (isset($post['action'])){
+
+            // edit a user
+            if (strip_tags($post['action']) === "edit") {
+                $id = strip_tags($post['user']);
+                $this->result = json_encode(['ok' => true, 'action'=>'edit', 'page' => "$root/user.php?id=$id"]);
+                return;
+
+            // delete a user
+            } else if (strip_tags($post['action']) === "delete"){
+                $id = strip_tags($post['user']);
+
+                $users = new Users($site);
+                $user = $users->get($id);
+                $name = $user->getName();
+
+                $this->result = json_encode(['ok' => true, 'action'=>'delete',
+                    'message' => "<a href='#' class='alert-link' id='confirm-delete' value='$id'>Click here</a> to permanently delete $name. <strong>This can not be undone!!!</strong>"]);
+                return;
+
+            // confirm delete user
+            } else if (strip_tags($post['action']) === "confirm-delete"){
+                $id = strip_tags($post['user']);
+
+                $users = new Users($site);
+                $user = $users->get($id);
+
+                if (!is_null($user)) {
+                    $name = $user->getName();
+                } else {
+                    $name = "";
+                }
+
+                $success = $users->delete($id);
+
+                if ($success) {
+                    $this->result = json_encode(['ok' => true, 'action' => 'confirm-delete', 'success' => $success,
+                        'message' => "$name has been permanently deleted."]);
+                } else {
+                    $this->result = json_encode(['ok' => true, 'action' => 'confirm-delete', 'success' => $success,
+                        'message' => "There was an error deleting the selected user."]);
+                }
+                return;
+
+            } else if (strip_tags($post['action']) === "reset-password"){
+
+                $id = strip_tags($post['user']);
+
+                $mailer = new Email();
+                $users = new Users($site);
+                $success = is_null($users->passwordResetRequest($id, $mailer));
+
+                if ($success) {
+                    $this->result = json_encode(['ok' => true, 'action' => 'reset-password', 'success' => $success,
+                        'message' => "Password reset email successfully sent!"]);
+                } else {
+                    $this->result = json_encode(['ok' => true, 'action' => 'reset-password', 'success' => $success,
+                        'message' => "There was an error sending the user an email."]);
+                }
+                return;
+            }
+
+        } else {
+
+            $message = "";
+
+            if (count($post) === 0){
+                $message = "Post was empty";
+            } else {
+                $message = "Unidentified problem occurred";
+            }
+            $this->result = json_encode(['ok' => false, 'message' => $message]);
+            return;
         }
+
     }
 
     /**
-     * Get any redirect link
-     * @return mixed Redirect link
+     * @return string
      */
-    public function getRedirect() {
-        return $this->redirect;
+    public function getResult()
+    {
+        return $this->result;
     }
 
 
-    private $redirect;	///< Page we will redirect the user to.
+    private $result; // ajax result encoded in JSON
 }
