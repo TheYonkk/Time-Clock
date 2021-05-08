@@ -30,7 +30,7 @@ class AdminView extends View
         $events = new Events($this->site);
         $earliest = $events->getEarliestDate();
         $earliest = date("Y-m-d H:i", $earliest);
-        $latest = date("Y-m-d H:i");
+        $latest = "now";
 
 
         $html = <<<HTML
@@ -46,6 +46,8 @@ class AdminView extends View
         <div class="container" id="admin">
         
         <div class="row">
+        
+            <!-- Basic report generator -->
             <div class="col-6">
             
                 <div class="h-100 p-5 bg-light border rounded-3">
@@ -61,6 +63,70 @@ class AdminView extends View
                         <input type="datetime-local" class="form-control w-50" id="end" name="end" value="$latest" min="$earliest" max="$latest">
                     </div>
                     <input class="btn btn-outline-secondary" type="submit" name="Download" value="Download">
+                </form>
+                </div>
+        
+            </div>
+            
+            <!-- current usage stats -->
+            <div class="col-6">
+            
+                <div class="h-100 p-5 bg-light border rounded-3">
+                <form id="basic-report" method="post" action="post/admin.php">
+                    <h2>Current usage</h2>
+                    <p>Users that are currently clocked in.</p>
+                    <table class="table table-sm">
+                      <thead>
+                        <tr>
+                          <th scope="col">User</th>
+                          <th scope="col">Duration</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+HTML;
+        $events = new Events($this->site);
+        foreach($events->getClockedInUsers() as $pair){
+            $user = $pair[0];
+            $duration = $pair[1];
+
+            $name = $user->getName();
+            $timestr = "";
+            $continue = false;
+
+            $days = gmdate("z", $duration);
+            if ($days !== "0"){
+                $s = ($days === "01")?'':'s';
+                $timestr .= $days . " day$s, ";
+                $continue = true;
+            }
+
+            $hours = gmdate("G", $duration);
+            if ($hours !== "0" or $continue){
+                $s = ($hours === "1")?'0':'s';
+                $timestr .= $hours . " hour$s, ";
+                $continue = true;
+            }
+
+            $mins = gmdate("i", $duration);
+            if ($mins !== "00" or $continue){
+                $s = ($mins === "01")?'':'s';
+                $timestr .= $mins . " minute$s, ";
+                $continue = true;
+            }
+
+            $secs = gmdate("s", $duration);
+            if ($secs !== "00" or $continue){
+                $s = ($secs === "01")?'':'s';
+                $timestr .= $secs . " second$s";
+            }
+
+
+            $html .= "<tr><td>$name</td><td>$timestr</td></tr>";
+        }
+
+        $html .= <<<HTML
+                    </tbody>
+                  </table>                    
                 </form>
                 </div>
         

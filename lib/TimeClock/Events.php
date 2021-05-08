@@ -111,6 +111,30 @@ SQL;
 
     }
 
+    /**
+     * Returns an array of tuples. Each tuple consists of a the user and
+     * the duration of their current clock session in seconds
+     */
+    public function getClockedInUsers(){
+        $users = new Users($this->site);
+
+        $currentUsers = array();
+
+        foreach ($users->getUsers() as $user){
+            $lastEvent = $this->getLastEvent($user);
+
+            // they have a last event and the end time is non-existent
+            if (!is_null($lastEvent) && is_null($lastEvent->getClockOut())){
+
+                $duration = time() - $lastEvent->getClockIn();
+                $currentUsers[] = array($user, $duration);
+
+            }
+        }
+
+        return $currentUsers;
+    }
+
     public function downloadDateRange($start, $end){
 
         $startStr = date("Y-m-d H:i", $start);
