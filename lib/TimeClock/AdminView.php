@@ -74,7 +74,17 @@ class AdminView extends View
                 <div class="h-100 p-5 bg-light border rounded-3">
                 <form id="basic-report" method="post" action="post/admin.php">
                     <h2>Current usage</h2>
-                    <p>Users that are currently clocked in.</p>
+                    <p>
+HTML;
+        $num_users = count($events->getClockedInUsers());
+        if ($num_users === 1){
+            $html .= "There is 1 user currently clocked in.";
+        } else {
+            $html .= "There are " . $num_users . " users currently clocked in.";
+        }
+
+        $html .= <<<HTML
+                    </p>
                     <table class="table table-sm">
                       <thead>
                         <tr>
@@ -85,11 +95,11 @@ class AdminView extends View
                       <tbody>
 HTML;
         $events = new Events($this->site);
-        foreach($events->getClockedInUsers() as $pair){
-            $user = $pair[0];
-            $duration = $pair[1];
+        foreach($events->getClockedInUsers() as $name => $duration){
+//            $user = $pair[0];
+//            $duration = $pair[1];
 
-            $name = $user->getName();
+//            $name = $user->getName();
             $timestr = "";
             $continue = false;
 
@@ -102,7 +112,7 @@ HTML;
 
             $hours = gmdate("G", $duration);
             if ($hours !== "0" or $continue){
-                $s = ($hours === "1")?'0':'s';
+                $s = ($hours === "1")?'':'s';
                 $timestr .= $hours . " hour$s, ";
                 $continue = true;
             }

@@ -14,13 +14,12 @@ if(!$view->protect($site, $user)) {
     <?php echo $view->head(); ?>
 </head>
 
-<body>
+<body class="">
 <div class="users">
 
     <?php
     echo $view->header();
     echo $view->present();
-    echo $view->footer();
     ?>
 
 </div>

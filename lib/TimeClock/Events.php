@@ -114,8 +114,9 @@ SQL;
     /**
      * Returns an array of tuples. Each tuple consists of a the user and
      * the duration of their current clock session in seconds
+     * @param bool $sort_alphabetical Sort alphabetical or by time
      */
-    public function getClockedInUsers(){
+    public function getClockedInUsers($sort_alphabetical=False){
         $users = new Users($this->site);
 
         $currentUsers = array();
@@ -127,9 +128,15 @@ SQL;
             if (!is_null($lastEvent) && is_null($lastEvent->getClockOut())){
 
                 $duration = time() - $lastEvent->getClockIn();
-                $currentUsers[] = array($user, $duration);
+                $currentUsers[$user->getName()] = $duration;
 
             }
+        }
+
+        if ($sort_alphabetical){
+            ksort($currentUsers);
+        } else {
+            arsort($currentUsers);
         }
 
         return $currentUsers;

@@ -106,7 +106,7 @@ SQL;
 
 
         // Send email with the validator in it
-        $link = "http://webdev.cse.msu.edu"  . $this->site->getRoot() .
+        $link = "https://cse.msu.edu"  . $this->site->getRoot() .
             '/password-validate.php?v=' . $validator;
 
         $from = $this->site->getEmail();
@@ -124,7 +124,7 @@ SQL;
 <div id="email">
 <h1>Greetings, $name,</h1>
 
-<p>An account has been created for you on the Jolly Rd. shop time clock, <a href="http://webdev.cse.msu.edu$root">webdev.cse.msu.edu$root</a>.</p>
+<p>An account has been created for you on the Jolly Rd. shop time clock, <a href="https://cse.msu.edu$root">https://cse.msu.edu$root</a>.</p>
 
 <p><a class="btn btn-primary" href="$link">Finish account setup.</a></p>
 <p class="text-secondary">Please note: this link is unique to you.</p>
@@ -174,7 +174,7 @@ MSG;
         $validator = $validators->newValidator($userID);
 
         // Send email with the validator in it
-        $link = "http://webdev.cse.msu.edu"  . $this->site->getRoot() .
+        $link = "https://cse.msu.edu"  . $this->site->getRoot() .
             '/password-validate.php?v=' . $validator;
 
         $from = $this->site->getEmail();
