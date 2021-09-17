@@ -130,7 +130,54 @@ class Event
         $this->out = $out;
     }
 
+    /**
+     * Returns a string like "420 days, 69 minutes, 13 seconds"
+     * @return string A nicely formatted string with commas!
+     */
+    public function getDurationStr(){
 
+        if (is_null($this->out)){
+            return "";
+        }
+
+        $duration = $this->out - $this->in;
+
+        $timestr = "";
+        $continue = false;
+
+        $days = gmdate("z", $duration);
+        if ($days !== "0"){
+            $s = ($days === "01")?'':'s';
+            $timestr .= $days . " day$s, ";
+            $continue = true;
+        }
+
+        $hours = gmdate("G", $duration);
+        if ($hours !== "0" or $continue){
+            $s = ($hours === "1")?'':'s';
+            $timestr .= $hours . " hour$s, ";
+            $continue = true;
+        }
+
+        $mins = gmdate("i", $duration);
+        if ($mins !== "00" or $continue){
+            $s = ($mins === "01")?'':'s';
+            $timestr .= $mins . " minute$s, ";
+            $continue = true;
+        }
+
+        $secs = gmdate("s", $duration);
+        if ($secs !== "00" or $continue){
+            $s = ($secs === "01")?'':'s';
+            $timestr .= $secs . " second$s";
+        }
+
+        return $timestr;
+    }
+
+    public static function PHPToSQLTime($timestamp){
+        return date("Y-m-d H:i", $timestamp);
+    }
 
 
 

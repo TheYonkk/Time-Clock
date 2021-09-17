@@ -20,6 +20,7 @@ class UsersView extends View {
 
         $root = $site->getRoot();
         $this->addLink("$root/admin.php", "Home");
+        $this->addLink("$root/events.php", "Events");
         $this->addLink("$root/users.php", "Users", True);
         $this->addLink("$root/user.php", "New user");
         $this->addLink("$root/login.php", "Log out");

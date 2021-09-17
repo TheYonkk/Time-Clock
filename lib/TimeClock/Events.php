@@ -16,6 +16,7 @@ class Events extends Table
     }
 
 
+
     /**
      * Gets the last event for a user if it exists
      * @param User $user The user to search events fo
@@ -40,6 +41,75 @@ SQL;
         return new Event($statement->fetch(\PDO::FETCH_ASSOC));
 
     }
+
+
+    /**
+     * Gets all events given the input SQL filter (if any)
+     */
+    public function getEvents($start=null, $end=null, $userid=null){
+
+        if (is_null($start)){
+            $start = 0;
+        }
+
+        if (is_null($end)) {
+            $end = time();
+        }
+
+        if (is_null($userid)){
+            $userid = "*";
+        }
+
+
+        $startStr = date("Y-m-d H:i", $start);
+        $endStr = date("Y-m-d H:i", $end);
+
+
+        $users = new Users($this->site);
+        $usersTable = $users->getTableName();
+
+        $sql = <<<SQL
+SELECT $this->tableName.id,$usersTable.id as userid,notes,`in`,`out`
+FROM $this->tableName
+INNER JOIN $usersTable
+ON userid = $usersTable.id
+WHERE (`in` >= ? ) AND (`in` <= ? OR `out` <= ? )
+SQL;
+
+        $inputs = array($startStr, $endStr, $endStr);
+
+        if ($userid != "*"){
+            $sql .= " AND ($usersTable.id = ?) ";
+            $inputs[] = $userid;
+        }
+
+        $sql .= " ORDER BY `in` DESC";
+
+
+        $pdo = $this->pdo();
+        $statement = $pdo->prepare($sql);
+
+        $statement->execute($inputs);
+        if($statement->rowCount() === 0) {
+            return false;
+        }
+
+
+        //Fetch all of the rows from our MySQL table.
+        $rows = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
+
+        $events = [];
+        foreach ($rows as $row) {
+            $events[] = new Event($row);
+        }
+
+
+
+        return $events;
+    }
+
+
 
     /**
      * Update an event in the database
@@ -142,7 +212,7 @@ SQL;
         return $currentUsers;
     }
 
-    public function downloadDateRange($start, $end){
+    public function downloadDateRange($start, $end, $userid=null){
 
         $startStr = date("Y-m-d H:i", $start);
         $endStr = date("Y-m-d H:i", $end);
@@ -158,24 +228,32 @@ ON userid = $usersTable.id
 WHERE (`in` >= ? ) AND (`in` <= ? OR `out` <= ? )
 SQL;
 
+        $params = array($startStr, $endStr, $endStr);
+
+        # add user id filter if desired
+        if (!is_null($userid)){
+            $sql .= " AND userid = ?";
+            $params[] = $userid;
+        }
+
 
         $pdo = $this->pdo();
         $statement = $pdo->prepare($sql);
 
-        $statement->execute(array($startStr, $endStr, $endStr));
+        $statement->execute($params);
         if($statement->rowCount() === 0) {
             return false;
         }
 
 
-        //Fetch all of the rows from our MySQL table.
+        // Fetch all of the rows from our MySQL table.
         $rows = $statement->fetchAll(\PDO::FETCH_ASSOC);
 
-        //Get the column names.
+        // Get the column names.
         $columnNames = array();
         if(!empty($rows)){
-            //We only need to loop through the first row of our result
-            //in order to collate the column names.
+            // We only need to loop through the first row of our result
+            // in order to collate the column names.
             $firstRow = $rows[0];
             foreach($firstRow as $colName => $val){
                 $columnNames[] = $colName;
@@ -235,5 +313,31 @@ SQL;
             return strtotime( $row["in"] );
         }
     }
+
+
+    /**
+     * Get an event based on the id
+     * @param $id ID of the event
+     * @return User object if successful, null otherwise.
+     */
+    public function get($id) {
+
+        $sql =<<<SQL
+SELECT * from $this->tableName
+where id=?
+SQL;
+
+        $pdo = $this->pdo();
+        $statement = $pdo->prepare($sql);
+
+        $statement->execute(array($id));
+        if($statement->rowCount() === 0) {
+            return null;
+        }
+
+        return new Event($statement->fetch(\PDO::FETCH_ASSOC));
+
+    }
+
 
 }

@@ -18,6 +18,12 @@ class TimeClockView extends View
             $this->error = True;
         }
 
+        if (isset($get["key"])){
+            $this->key = strip_tags($get["key"]);
+        } else {
+            $this->key = "";
+        }
+
         $this->setTitle("Time Clock");
 
     }
@@ -29,6 +35,7 @@ class TimeClockView extends View
         $user = $_SESSION[User::SESSION_NAME];
         $name = $user->getName();
 
+        $key = $this->key;
 
         $html .= <<<HTML
     
@@ -37,6 +44,8 @@ class TimeClockView extends View
     <img class="mb-4" src="dist/img/SR_Badge.svg" alt="" width="72" height="73">
     <h1 class="h3 mb-1 fw-normal">Hello, $name</h1>
     <p class="">Not you? <a href="login.php">Sign out</a>.</p>
+    
+    <input type="hidden" name="key" id="key" value="$key" />
 
     <div>
         <input type="radio" class="btn-check" name="clock" value="in" id="success-outlined" autocomplete="off">
@@ -94,6 +103,7 @@ HTML;
 
     private $user;
     private $session;
+    private $key;
     private $error = False;
 
 }

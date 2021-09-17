@@ -25,7 +25,19 @@ class AdminController
             if ($success) {
                 $this->download = true;
             }
+
+        # generate a login link
+        } elseif (isset($post['Generate'])){
+
+            $expire = strtotime(strip_tags($post["expire"]));
+
+            $loginkeys = new LoginKeys($site);
+            $hash = $loginkeys->generateNewKey($expire);
+
+            $this->redirect = $site->getRoot() . "/qr.php?key=$hash";
+
         }
+
 
     }
 

@@ -4,12 +4,12 @@ import {parse_json} from './parse_json';
 
 function alertSuccess(selector, msg){
     selector.html("<div class=\"alert alert-success\" role=\"alert\">" + msg + "</div>")
-        .hide().slideDown(1000).delay(2000).slideUp(1000);
+        .hide().slideDown(100).delay(2000).slideUp(100);
 }
 
 function alertError(selector, msg){
     selector.html("<div class=\"alert alert-danger\" role=\"alert\"><strong>Error!</strong> " + msg + "</div>")
-        .hide().slideDown(1000).delay(5000).slideUp(1000);
+        .hide().slideDown(100).delay(2000).slideUp(100);
 }
 
 export const TimeClock = function(sel){

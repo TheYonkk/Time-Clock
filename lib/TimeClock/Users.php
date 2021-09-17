@@ -192,7 +192,7 @@ MSG;
 <div id="email">
 <h1>Greetings, $name,</h1>
 
-<p>A Time Clock site administrator has generated a password reset link for you. Click the link below to set a new password for your account.</p>
+<p>The Timeclock has generated a password reset link for you. Click the link below to set a new password for your account.</p>
 
 <p><a class="btn btn-primary" href="$link">Reset password.</a></p>
 <p class="text-secondary">Please note: this link is unique to you. If you did not request a password reset, you may disregard this email.</p>
@@ -243,6 +243,30 @@ SQL;
         $statement = $pdo->prepare($sql);
 
         $statement->execute(array($id));
+        if($statement->rowCount() === 0) {
+            return null;
+        }
+
+        return new User($statement->fetch(\PDO::FETCH_ASSOC));
+
+    }
+
+    /**
+     * Get a user based on the id
+     * @param $email Email of the user
+     * @return User object if successful, null otherwise.
+     */
+    public function getByEmail($email) {
+
+        $sql =<<<SQL
+SELECT * from $this->tableName
+where email=?
+SQL;
+
+        $pdo = $this->pdo();
+        $statement = $pdo->prepare($sql);
+
+        $statement->execute(array($email));
         if($statement->rowCount() === 0) {
             return null;
         }
@@ -356,6 +380,7 @@ SQL;
         $sql = <<<SQL
 SELECT *
 from $this->tableName
+ORDER BY `name` ASC
 SQL;
 
         $pdo = $this->pdo();
@@ -382,3 +407,5 @@ SQL;
     }
 
 }
+
+

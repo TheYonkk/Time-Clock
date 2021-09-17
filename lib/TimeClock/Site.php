@@ -86,6 +86,24 @@ class Site {
         $this->email = $email;
     }
 
+    /**
+     * @return string
+     */
+    public function getBase(): string
+    {
+        return $this->base;
+    }
+
+    /**
+     * @param string $base
+     */
+    public function setBase(string $base)
+    {
+        $this->base = $base;
+    }
+
+
+
 
 
 //	public function startup($user) {
@@ -99,6 +117,7 @@ class Site {
     private $dbPassword = null; ///< Database password
     private $tablePrefix = '';  ///< Database table prefix
     private $root = '';         ///< Site root
+    private $base = '';         ///< Site base url
 
 	private static $pdo = null; ///< The PDO object
 

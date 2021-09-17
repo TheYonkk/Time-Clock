@@ -8,6 +8,8 @@ class LoginView extends View
 {
 
     public function __construct($site, &$session, $get, &$cookie){
+        parent::__construct($site);
+
         $this->session = $session;
 
         if (isset($get['e'])){
@@ -37,7 +39,7 @@ class LoginView extends View
 
         $html = "";
 
-
+        $root = $this->site->getRoot();
 
 
         $html .= <<<HTML
@@ -75,7 +77,9 @@ HTML;
       </label>
     </div>
     <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+    <p class="mt-5"><a href="$root/password-reset.php">I forgot my damn password</a></p>
   </form>
+  
 </main>
 
 HTML;

@@ -22,6 +22,7 @@ return function(TimeClock\Site $site) {
     }
 
     $site->setRoot("/~" . USER . "/$dir");
+    $site->setBase(BASE_URL);
 
     $host = $_SERVER['HTTP_HOST'];
     $site->setEmail(SITE_EMAIL);

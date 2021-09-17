@@ -16,6 +16,16 @@ class TimeClockController
     public function __construct(Site $site, array &$session, array $post) {
 
 
+        // before doing anything, check to see if the login key is invalid
+        $loginKeys = new LoginKeys($site);
+        $key = $loginKeys->getActiveKey();
+        $userKey = strip_tags($post["key"]);
+        if (is_null($key) or ($userKey != $key)){
+            $this->result = json_encode(['ok' => false, 'message' => "Login link is expired or is invalid."]);
+            return;
+        }
+
+
         // if neither in or out are set, do nothing
         if (!isset($post['clock'])){
             $this->result = json_encode(['ok' => false, 'message' => "You must select an option."]);
@@ -27,6 +37,7 @@ class TimeClockController
         $events = new Events($site);
 
         if ($clock === "in"){
+
 
             // check to see if the user has an open session without a clock-out
             $lastEvent = $events->getLastEvent($user);
