@@ -12,7 +12,7 @@ import shutil
 
 # if the user swipes and has been clocked in for longer than the amount of time below, ask them if they
 # really mean to clock out.
-QUESTIONABLE_SHOP_HOURS = timedelta(hours=0, minutes=5, seconds=0, milliseconds=0)
+QUESTIONABLE_SHOP_HOURS = timedelta(hours=15, minutes=0, seconds=0, milliseconds=0)
 
 TERMINAL_COLS, TERMINAL_ROWS = shutil.get_terminal_size()
 
@@ -67,11 +67,12 @@ def main():
 
         # connect to database
         try:
-            cnx = mysql.connector.connect(user='', password='',
+            cnx = mysql.connector.connect(user='yonkers4', password='gogreen',
                                   host='mysql-user.cse.msu.edu',
                                   database='yonkers4')
         except mysql.connector.Error as err:
             print_beautiful_message("Something went wrong when attempting to connect to the database.", bcolors.FAIL, TERMINAL_COLS)
+            time.sleep(2.5)
             continue
 
         userid, username = get_user_id_from_db(apid, cnx)

@@ -37,6 +37,7 @@ class User
     $this->name = $row['name'];
     $this->role = $row['role'];
     $this->group = $row['group'];
+    $this->apid = $row['apid'];
   }
 
 
@@ -111,11 +112,30 @@ class User
     $this->group = $group;
   }
 
+    /**
+     * @return mixed
+     */
+    public function getApid()
+    {
+        return $this->apid;
+    }
+
+    /**
+     * @param mixed $apid
+     */
+    public function setApid($apid)
+    {
+        $this->apid = $apid;
+    }
+
+
+
 
   private $id;		// The internal ID for the user
   private $email;		// Email address
   private $name; 		// full name
   private $role;
   private $group;
+  private $apid;
 
 }

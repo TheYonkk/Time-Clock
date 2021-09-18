@@ -90,13 +90,13 @@ SQL;
 
         // Add a record to the user table
         $sql = <<<SQL
-INSERT INTO $this->tableName(email, name, role, `group`)
-values(?, ?, ?, ?)
+INSERT INTO $this->tableName(email, name, role, `group`, `apid`)
+values(?, ?, ?, ?, ?)
 SQL;
 
         $statement = $this->pdo()->prepare($sql);
         $statement->execute([
-            $user->getEmail(), $user->getName(), $user->getRole(), $user->getGroup()
+            $user->getEmail(), $user->getName(), $user->getRole(), $user->getGroup(), $user->getApid()
         ]);
         $id = $this->pdo()->lastInsertId();
 
@@ -284,12 +284,12 @@ SQL;
     public function update(User $user) {
         $sql =<<<SQL
 UPDATE $this->tableName
-SET email=?,name=?,role=?,`group`=?
+SET email=?,name=?,role=?,`group`=?, `apid`=?
 WHERE id=?
 SQL;
 
         $info = array($user->getEmail(), $user->getName(), $user->getRole(),
-            $user->getGroup(), $user->getId());
+            $user->getGroup(), $user->getApid(), $user->getId());
 
         $pdo = $this->pdo();
         $statement = $pdo->prepare($sql);

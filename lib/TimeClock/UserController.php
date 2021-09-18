@@ -41,6 +41,7 @@ class UserController {
         //
         $email = strip_tags($post['email']);
         $name = strip_tags($post['name']);
+        $apid = strip_tags($post['apid']);
 
         switch($post['role']) {
             case "Admin":
@@ -76,7 +77,8 @@ class UserController {
             'password' => null,
             'salt' => null,
             'group' => $group,
-            'role' => $role
+            'role' => $role,
+            'apid' => $apid
         ];
         $editUser = new User($row);
 

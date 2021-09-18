@@ -45,12 +45,14 @@ class UserView extends View
             $group = $user->getGroup();
             $role = $user->getRole();
             $id = $user->getId();
+            $apid = $user->getApid();
             $html .= "<input type=\"hidden\" name=\"id\" value=\"$id\">";
         } else {
             $name="";
             $email="";
             $group="";
             $role="";
+            $apid="";
         }
 
 
@@ -58,6 +60,11 @@ class UserView extends View
     <div class="form-group py-2">
         <label for="name">Full name</label>
         <input type="input" class="form-control" id="name"  name="name" placeholder="Sparty McSpartan" value="$name">
+    </div>
+    
+    <div class="form-group py-2">
+        <label for="name">APID <span class="text-secondary">(Without the leading 'A' or '1')</span></label>
+        <input type="input" class="form-control" id="apid"  name="apid" placeholder="12345678" value="$apid">
     </div>
 
     <div class="form-group py-2">
