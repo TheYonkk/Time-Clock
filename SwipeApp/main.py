@@ -67,7 +67,7 @@ def main():
 
         # connect to database
         try:
-            cnx = mysql.connector.connect(user='yonkers4', password='gogreen',
+            cnx = mysql.connector.connect(user='', password='',
                                   host='mysql-user.cse.msu.edu',
                                   database='yonkers4')
         except mysql.connector.Error as err:
