@@ -124,10 +124,18 @@ SQL;
 <div id="email">
 <h1>Greetings, $name,</h1>
 
-<p>An account has been created for you on the Jolly Rd. shop time clock, <a href="https://cse.msu.edu$root">https://cse.msu.edu$root</a>.</p>
+<p>An account has been created for you on the MSU Formula Racing shop time clock, <a href="https://cse.msu.edu$root">https://cse.msu.edu$root</a>.</p>
+
+<p>Since there are over 100 new members and only a handful of leaders, the time clock will be used as a log for your participation. To get credit, 
+you must swipe your MSU student ID upon entering and leaving the shop. For machining at the engineering building, 
+the process will be slightly different and will be explained at a later date.</p>
+
+<p>This system is brand new and is continuously under development. If you have any trouble, please contact the team's
+software lead, Dave Yonkers (<a href="mailto:yonkers4@msu.edu">yonkers4@msu.edu</a>).</p>
 
 <p><a class="btn btn-primary" href="$link">Finish account setup.</a></p>
-<p class="text-secondary">Please note: this link is unique to you.</p>
+<p class="text-secondary fst-italic">Please note: this link is unique to you. Your passwords are encrypted and can not been seen by 
+anyone.</p>
 </div>
 </body>
 
