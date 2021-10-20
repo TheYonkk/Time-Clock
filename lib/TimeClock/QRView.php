@@ -34,7 +34,7 @@ class QRView extends View
 
             $QRPixels = 300;
 
-            $loginLink = "$base" . "$root?key=$key";
+            $loginLink = "$base" . "?key=$key";
             $image = "https://chart.googleapis.com/chart?cht=qr&chs=" . $QRPixels . "x" . $QRPixels . "&chl=" . urlencode($loginLink);
 
             $loginkeys = new LoginKeys($this->site);

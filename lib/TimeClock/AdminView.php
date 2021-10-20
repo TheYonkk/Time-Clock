@@ -149,6 +149,7 @@ HTML;
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
+                                      <th scope="col"></th>
                                       <th scope="col">User</th>
                                       <th scope="col">Duration</th>
                                     </tr>
@@ -156,7 +157,10 @@ HTML;
                                 <tbody>
 HTML;
         $events = new Events($this->site);
-        foreach($events->getClockedInUsers() as $name => $duration){
+        foreach($events->getClockedInUsers() as $name => $info){
+
+            $duration = $info[1];
+            $id = $info[0];
 //            $user = $pair[0];
 //            $duration = $pair[1];
 
@@ -191,8 +195,10 @@ HTML;
                 $timestr .= $secs . " second$s";
             }
 
+            $root = $this->site->getRoot();
+            $editbtn = "<a class='btn btn-outline-secondary py-0' href='$root/event.php?id=$id'>Edit</a>";
 
-            $html .= "<tr><td>$name</td><td>$timestr</td></tr>";
+            $html .= "<tr><td>$editbtn</td><td>$name</td><td>$timestr</td></tr>";
         }
 
         $html .= <<<HTML

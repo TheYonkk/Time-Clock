@@ -198,7 +198,7 @@ SQL;
             if (!is_null($lastEvent) && is_null($lastEvent->getClockOut())){
 
                 $duration = time() - $lastEvent->getClockIn();
-                $currentUsers[$user->getName()] = $duration;
+                $currentUsers[$user->getName()] = array($lastEvent->getId(), $duration);
 
             }
         }
