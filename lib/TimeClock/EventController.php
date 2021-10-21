@@ -60,27 +60,41 @@ class EventController {
             }
             $this->eventsFilters .= "user=" . strip_tags($post["filterUserID"]);
         }
-
+        // User ID used for a new event
+        if(isset($post['newUserID'])) {
+            $newUserID = strip_tags($post['newUserID']);
+        } else {
+            $newEventID = Null;
+        }
 
 
         $events = new Events($site);
-        $event =$events->get($id);
+        if ($id == -1){  // new event here
+            $users = new Users($site);
+            $user = $users->get($newUserID);
+            $eventId = $events->clockIn($user);
+            $event = $events->get($eventId);
+        } else {
+            $event = $events->get($id);
+        }
+        
 
-        if (is_null($event)){
-            return;
+        if (!is_null($event)) {
+
+            # update everything
+            $event->setClockIn($in);
+            $event->setNotes($notes);
+            if (!is_null($out)) {
+                $event->setClockOut($out);
+            }
+
+            // determine if the current user can modify the edited event
+            if ($user->getRole() == User::ADMIN) {
+                $events->update($event);
+            }
         }
 
-        # update everything
-        $event->setClockIn($in);
-        $event->setNotes($notes);
-        if (!is_null($out)){
-            $event->setClockOut($out);
-        }
 
-        // determine if the current user can modify the edited event
-        if ($user->getRole() == User::ADMIN) {
-            $events->update($event);
-        }
 
         // success, add filters back onto redirect
         $this->redirect .= $this->eventsFilters;

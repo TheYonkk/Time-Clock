@@ -177,7 +177,7 @@ SQL;
         }
 
         $id = $this->pdo()->lastInsertId();
-        return true;
+        return $id;
 
     }
 
