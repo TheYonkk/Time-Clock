@@ -16,6 +16,10 @@ class EventsView extends View {
         $this->site = $site;
         $this->user = $user;
 
+        if (isset($get["msg"])){
+            $this->msg = strip_tags($get["msg"]);
+        }
+
         if (isset($get["start"]) and strip_tags($get["start"]) != ""){
             $this->start = strtotime(strip_tags($get["start"]));
         } else {
@@ -73,17 +77,33 @@ class EventsView extends View {
             $usersHTML .= " value=$userID>$name</option>";
         }
 
+        // display the message if there is one
+        $msgBlock = null;
+        if (!is_null($this->msg)){
+            $msgBlock = "<div class='alert alert-primary alert-dismissible' role='alert'>$this->msg <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button> </div>";
+        }
+
+
         $html = <<<HTML
 <main class="mt-auto py-3">
 <div class="container">
 
-<div class="row">
+<!-- new event link -->
+<div class="row pb-4 align-items-end justify-content-evenly">
+    <div class="col-4 d-flex justify-content-center">
+        <p><a class="btn btn-outline-primary w-100" href="$root/event.php">New Event</a></p>
+    </div>
+</div>
+
+<!-- message if there is one -->
+<div class="row text-center">
     <div class="col">
-        <div id="message"></div>
+        <div id="message">$msgBlock</div>
     </div>
 </div>
 
 <form id="events-update" method="get" action="$root/events.php">
+    <hr> <!-- horizontal line break -->
     <div class="row pb-4 align-items-end justify-content-evenly">
         <div class="col">
             <div class="form-group">
@@ -209,6 +229,7 @@ HTML;
     private $userid;
     private $start;
     private $end;
+    private $msg = null;
     private $defaultSpan = 86400;  // one day in seconds
 
 }

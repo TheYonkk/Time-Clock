@@ -8,10 +8,12 @@ class EventView extends View
 {
 
     private $eventid = null;
+    private $msg = null;
 
     private $filterStart = null;
     private $filterEnd = null;
     private $filterUserID = null;
+
 
     public function __construct(Site $site, $get)
     {
@@ -32,6 +34,12 @@ class EventView extends View
         }
         if (isset($get["filterUserID"])){
             $this->filterUserID = strip_tags($get["filterUserID"]);
+        }
+        if (isset($get["filterUserID"])){
+            $this->filterUserID = strip_tags($get["filterUserID"]);
+        }
+        if (isset($get["msg"])){
+            $this->msg = strip_tags($get["msg"]);
         }
 
 
@@ -84,6 +92,15 @@ class EventView extends View
             $outStr = "";
         }
 
+        // if "delete" was in the get, alert the user for a confirmation, then add "Confirm"
+        // to the delete submission button
+        $deleteConfirm = null;
+        $deleteConfirmPost = null;
+        if ($this->msg === "delete"){
+            $deleteConfirm = "<div class='alert alert-danger' role='alert'>Are you sure that you want to permanently delete this event? This can not be undone.</div>";
+            $deleteConfirmPost = "Confirmed";
+        }
+
         $html = "<div class='row justify-content-center'>";
         $html .= "";
 
@@ -132,6 +149,11 @@ class EventView extends View
         <textarea class="form-control" name="notes" rows="5">$notes</textarea>
     </div>
     
+    <div class="form-group mt-3">
+        $deleteConfirm
+        <button type="submit" class="btn btn-outline-danger my-0 py-0" name="delete" value="delete$deleteConfirmPost" id="delete">Delete Event</button>
+    </div>
+    
     <div class="form-group mt-5">
         <button type="submit" class="btn btn-success">Submit</button>
         <input type="button" class="btn btn-danger" onclick="history.back()" value="Cancel" />
@@ -142,7 +164,5 @@ HTML;
       return $html;
 
     }
-
-
 
 }

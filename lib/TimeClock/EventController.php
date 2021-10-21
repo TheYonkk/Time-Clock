@@ -22,6 +22,28 @@ class EventController {
             return;
         }
 
+        // if the user selected to potentially delete an event
+        if (isset($post["delete"]) && isset($post['id'])){
+
+            // confirmed delete
+            if (strip_tags($post["delete"]) === "deleteConfirmed") {
+                $events = new Events($site);
+                $success = $events->delete(strip_tags($post['id']));
+
+                $this->redirect = "$root/events.php?msg=";
+                if ($success){
+                    $this->redirect .= "Success!";
+                } else {
+                    $this->redirect .= "Error!";
+                }
+
+                return;
+            }
+
+            $this->redirect = "$root/event.php?msg=delete&id=" . strip_tags($post['id']);
+            return;
+        }
+
         // get the event ID that we are editing
         if(isset($post['id'])) {
             $id = strip_tags($post['id']);
@@ -77,7 +99,7 @@ class EventController {
         } else {
             $event = $events->get($id);
         }
-        
+
 
         if (!is_null($event)) {
 
