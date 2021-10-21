@@ -69,17 +69,21 @@ def main():
         try:
             cnx = mysql.connector.connect(user='yonkers4', password='gogreen',
                                   host='mysql-user.cse.msu.edu',
-                                  database='yonkers4')
+                                  database='yonkers4',
+                                  buffered=True)
         except mysql.connector.Error as err:
             print_beautiful_message("Something went wrong when attempting to connect to the database.", bcolors.FAIL, TERMINAL_COLS)
             time.sleep(2.5)
             continue
 
-        userid, username = get_user_id_from_db(apid, cnx)
+        
+        userdata = get_user_id_from_db(apid, cnx, TERMINAL_COLS)
 
         # if no user id found in the database, continue
-        if userid == None:
+        if userdata == None:
             continue
+        else:
+            userid, username = userdata
 
         # determine if we need to clock in or clock out, then do so
         handle_swipe(userid, username, cnx, TERMINAL_COLS)
@@ -148,7 +152,7 @@ def get_apid_number(data):
         return None
 
 
-def get_user_id_from_db(apid, db_connector):
+def get_user_id_from_db(apid, db_connector, term_cols):
     """
     Gets the user ID from the database when given the user's APID.
     @param apid - Int, the apid "without the A" as an integer
@@ -164,10 +168,12 @@ def get_user_id_from_db(apid, db_connector):
 
     # look for some sort of error
     if cursor.rowcount == 0:
-        print(f"User with APID A{apid} not found in the database!")
+        print_beautiful_message(f"User with APID A{apid} not found in the database!", bcolors.FAIL, term_cols)
+        time.sleep(2.5)
         return None
     elif cursor.rowcount > 1:
-        print(f"More than one user has an APID A{apid}! There must be an error.")
+        print_beautiful_message(f"More than one user has an APID A{apid}! There must be an error.", bcolors.FAIL, term_cols)
+        time.sleep(2.5)
         return None
 
     # get the user id from the successful query
@@ -192,8 +198,11 @@ def handle_swipe(userid, username, db_connector, term_cols):
 
     cursor.execute(query, (userid,))
 
-    if cursor.rowcount == 0:
-        print("In")
+    # clock in
+    if cursor.rowcount <= 0:
+        insert_clock_in(userid, username, cursor, term_cols)
+        db_connector.commit()
+        cursor.close()
         return
 
     row = cursor.fetchall()[0]
@@ -234,11 +243,18 @@ def handle_swipe(userid, username, db_connector, term_cols):
 
 def insert_clock_in(userid, username, cursor, term_cols):
 
-    query = ("INSERT INTO timeclock_event(userid, `in`) values(%s, %s)")
-    cursor.execute(query, (userid, datetime.now()))
+    try:
 
-    if cursor.getlastrowid() is not None:
-        print_beautiful_message(f"{username} was successfully clocked in!", bcolors.OKGREEN, term_cols)
+        query = ("INSERT INTO timeclock_event(userid, `in`) values(%s, %s)")
+        cursor.execute(query, (userid, datetime.now()))
+
+        if cursor.getlastrowid() is not None:
+            print_beautiful_message(f"{username} was successfully clocked in!", bcolors.OKGREEN, term_cols)
+
+    except:
+
+        print_beautiful_message(f"Error connecting to database!", bcolors.FAIL, term_cols)
+
 
 
 def insert_clock_out(event_id, username, cursor, term_cols):
