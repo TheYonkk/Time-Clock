@@ -95,6 +95,11 @@ class EventController {
             $users = new Users($site);
             $user = $users->get($newUserID);
             $eventId = $events->clockIn($user);
+
+            # this sleep ensures that the transaction to create the event completes
+            # before we look for the insert into the DB
+            sleep(1);
+
             $event = $events->get($eventId);
         } else {
             $event = $events->get($id);
