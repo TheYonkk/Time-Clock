@@ -79,13 +79,13 @@ class UserView extends View
         <select class="form-control" id="group" name="group">
 HTML;
 
+        # display user group options
         foreach (User::getGroups() as $userGroup)
         {
-          print($userGroup . "  ");
           if ($group === $userGroup){
-            $html .= "<option selected>" . User::getGroupStr($userGroup) . "</option>";
+            $html .= "<option value='$userGroup' selected>" . User::getGroupStr($userGroup) . "</option>";
           } else {
-            $html .= "<option>" . User::getGroupStr($userGroup) . "</option>";
+            $html .= "<option value='$userGroup'>" . User::getGroupStr($userGroup) . "</option>";
           }
         }
 

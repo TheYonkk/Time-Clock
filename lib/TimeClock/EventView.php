@@ -69,6 +69,7 @@ class EventView extends View
             $email = $user->getEmail();
             $in = $event->getClockIn();
             $out = $event->getClockOut();
+            $forgot = $event->didForget();
             $notes = $event->getNotes();
             $id = $this->eventid;
         } else {
@@ -78,6 +79,7 @@ class EventView extends View
             $out = 0;
             $id = -1;
             $notes = "";
+            $forgot = false;
         }
 
         if ($in != 0){
@@ -91,6 +93,9 @@ class EventView extends View
         } else {
             $outStr = "";
         }
+
+        // to check the checkbox if true
+        $forgotChecked = $forgot ? "checked" : "";
 
         // if "delete" was in the get, alert the user for a confirmation, then add "Confirm"
         // to the delete submission button
@@ -149,7 +154,14 @@ class EventView extends View
         <textarea class="form-control" name="notes" rows="5">$notes</textarea>
     </div>
     
-    <div class="form-group mt-3">
+    <div class="form-group mt-1">
+      <input class="form-check-input" type="checkbox" value="" name="forgot" id="forgot" $forgotChecked>
+      <label class="form-check-label" for="forgot">
+        Forgot to clock in/out
+      </label>
+    </div>
+    
+    <div class="form-group mt-4">
         $deleteConfirm
         <button type="submit" class="btn btn-outline-danger my-0 py-0" name="delete" value="delete$deleteConfirmPost" id="delete">Delete Event</button>
     </div>
@@ -159,6 +171,7 @@ class EventView extends View
         <input type="button" class="btn btn-danger" onclick="history.back()" value="Cancel" />
     </div>
 </form>
+</div>
 HTML;
 
       return $html;

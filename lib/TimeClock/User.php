@@ -36,7 +36,7 @@ class User
         return "Electronics";
         break;
       case User::OPERATIONS:
-        return "Aerodynamics";
+        return "Operations";
         break;
       case User::POWERTRAIN:
         return "Powertrain";

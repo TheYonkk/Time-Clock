@@ -19,6 +19,7 @@ class Event
         $this->userID = $row["userid"];
         $this->notes = $row["notes"];
         $this->in = strtotime( $row["in"] );
+        $this->forgot = $row['forgot'];
 
         if (!is_null($row["out"])){
             $this->out = strtotime( $row["out"] );
@@ -44,6 +45,22 @@ class Event
         } else {
             return date("Y-m-d H:i:s", $this->out);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function didForget()
+    {
+        return $this->forgot;
+    }
+
+    /**
+     * @param bool $forgot
+     */
+    public function setForgot(bool $forgot)
+    {
+        $this->forgot = $forgot;
     }
 
 
@@ -186,6 +203,7 @@ class Event
     private $notes;
     private $in;
     private $out = null;
+    private $forgot = false;  # forgot to clock in/out?
 
 
 

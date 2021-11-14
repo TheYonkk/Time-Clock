@@ -119,7 +119,7 @@ SQL;
 
         $sql =<<<SQL
 UPDATE $this->tableName
-SET userid=?,notes=?,`in`=?,`out`=?
+SET userid=?,notes=?,`in`=?,`out`=?,`forgot`=?
 WHERE id=?
 SQL;
 
@@ -130,9 +130,12 @@ SQL;
             $info[] = null;
         } else {
             $info[] = date("Y-m-d H:i:s", $event->getClockOut());
-        }
-        $info[] = $event->getId();
 
+        }
+        $info[] = $event->didForget(); // forgot to clock out?
+
+
+        $info[] = $event->getId();
 
         $pdo = $this->pdo();
         $statement = $pdo->prepare($sql);
@@ -140,6 +143,7 @@ SQL;
         try {
             $ret = $statement->execute($info);
         } catch(\PDOException $e){
+            print($e);
             return False;
         }
 
@@ -221,7 +225,7 @@ SQL;
         $usersTable = $users->getTableName();
 
         $sql = <<<SQL
-SELECT name,email,`in`,`out`,notes
+SELECT name,email,`group`,`in`,`out`,notes,forgot
 FROM $this->tableName
 INNER JOIN $usersTable
 ON userid = $usersTable.id
@@ -277,6 +281,7 @@ SQL;
 
         //Then, loop through the rows and write them to the CSV file.
         foreach ($rows as $row) {
+            $row['group'] = User::getGroupStr($row['group']);
             fputcsv($fp, $row);
         }
 

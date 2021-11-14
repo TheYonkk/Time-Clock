@@ -53,23 +53,13 @@ class UserController {
                 break;
         }
 
-        switch($post['group']) {
-            case "Formula":
-                $group = User::FORMULA;
-                break;
-
-            case "Baja":
-                $group = User::BAJA;
-                break;
-
-            case "Solar":
-                $group = User::SOLAR;
-                break;
-
-            default:
-                $group = User::OTHER;
-                break;
+        $group = User::OTHER;  # other by default
+        foreach (User::getGroups() as $userGroup){
+            if ($post['group'] === $userGroup){
+                $group = strip_tags($post['group']);
+            }
         }
+
 
         $row = ['id' => $id,
             'email' => $email,

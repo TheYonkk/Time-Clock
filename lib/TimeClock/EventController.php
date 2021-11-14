@@ -89,6 +89,13 @@ class EventController {
             $newEventID = Null;
         }
 
+        // forgot to clock in/out
+        if (isset($post['forgot'])){
+            $forgot = True;
+        } else {
+            $forgot = False;
+        }
+
 
         $events = new Events($site);
         if ($id == -1){  // new event here
@@ -110,6 +117,7 @@ class EventController {
 
             # update everything
             $event->setClockIn($in);
+            $event->setForgot($forgot);
             $event->setNotes($notes);
             if (!is_null($out)) {
                 $event->setClockOut($out);
