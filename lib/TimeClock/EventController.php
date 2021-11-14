@@ -22,6 +22,28 @@ class EventController {
             return;
         }
 
+        // if the user selected to potentially delete an event
+        if (isset($post["delete"]) && isset($post['id'])){
+
+            // confirmed delete
+            if (strip_tags($post["delete"]) === "deleteConfirmed") {
+                $events = new Events($site);
+                $success = $events->delete(strip_tags($post['id']));
+
+                $this->redirect = "$root/events.php?msg=";
+                if ($success){
+                    $this->redirect .= "Success!";
+                } else {
+                    $this->redirect .= "Error!";
+                }
+
+                return;
+            }
+
+            $this->redirect = "$root/event.php?msg=delete&id=" . strip_tags($post['id']);
+            return;
+        }
+
         // get the event ID that we are editing
         if(isset($post['id'])) {
             $id = strip_tags($post['id']);
@@ -60,27 +82,46 @@ class EventController {
             }
             $this->eventsFilters .= "user=" . strip_tags($post["filterUserID"]);
         }
-
+        // User ID used for a new event
+        if(isset($post['newUserID'])) {
+            $newUserID = strip_tags($post['newUserID']);
+        } else {
+            $newEventID = Null;
+        }
 
 
         $events = new Events($site);
-        $event =$events->get($id);
+        if ($id == -1){  // new event here
+            $users = new Users($site);
+            $user = $users->get($newUserID);
+            $eventId = $events->clockIn($user);
 
-        if (is_null($event)){
-            return;
+            # this sleep ensures that the transaction to create the event completes
+            # before we look for the insert into the DB
+            sleep(1);
+
+            $event = $events->get($eventId);
+        } else {
+            $event = $events->get($id);
         }
 
-        # update everything
-        $event->setClockIn($in);
-        $event->setNotes($notes);
-        if (!is_null($out)){
-            $event->setClockOut($out);
+
+        if (!is_null($event)) {
+
+            # update everything
+            $event->setClockIn($in);
+            $event->setNotes($notes);
+            if (!is_null($out)) {
+                $event->setClockOut($out);
+            }
+
+            // determine if the current user can modify the edited event
+            if ($user->getRole() == User::ADMIN) {
+                $events->update($event);
+            }
         }
 
-        // determine if the current user can modify the edited event
-        if ($user->getRole() == User::ADMIN) {
-            $events->update($event);
-        }
+
 
         // success, add filters back onto redirect
         $this->redirect .= $this->eventsFilters;

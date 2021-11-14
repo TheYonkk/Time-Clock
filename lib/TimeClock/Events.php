@@ -177,7 +177,7 @@ SQL;
         }
 
         $id = $this->pdo()->lastInsertId();
-        return true;
+        return $id;
 
     }
 
@@ -198,7 +198,7 @@ SQL;
             if (!is_null($lastEvent) && is_null($lastEvent->getClockOut())){
 
                 $duration = time() - $lastEvent->getClockIn();
-                $currentUsers[$user->getName()] = $duration;
+                $currentUsers[$user->getName()] = array($lastEvent->getId(), $duration);
 
             }
         }
@@ -336,6 +336,35 @@ SQL;
         }
 
         return new Event($statement->fetch(\PDO::FETCH_ASSOC));
+
+    }
+
+
+    /**
+     * Permanently deletes an event
+     * @param int $id event id to delete
+     * @return true upon successful deleting
+     */
+    public function delete($id){
+        $sql =<<<SQL
+DELETE FROM $this->tableName
+WHERE id=?
+SQL;
+
+        $info = array($id);
+
+        $pdo = $this->pdo();
+        $statement = $pdo->prepare($sql);
+
+        try {
+            $ret = $statement->execute($info);
+        } catch(\PDOException $e){
+            return False;
+        }
+
+        // if the delete failed, 0 rows will be affected
+        return $statement->rowCount() !== 0;
+
 
     }
 

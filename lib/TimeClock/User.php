@@ -10,12 +10,49 @@ class User
   const ADMIN = "A";
   const USER = "U";
 
-  const FORMULA = "F";
-  const BAJA = "B";
-  const SOLAR = "S";
-  const OTHER = "O";
+
+  # user groups
+  const AERODYNAMICS = "A";
+  const CHASSIS = "C";
+  const ELECTRONICS = "E";
+  const OPERATIONS = "O";
+  const POWERTRAIN = "P";
+  const SUSPENSION = "S";
+  const OTHER = "T";
 
   const SESSION_NAME = 'user';
+
+  public static function getGroupStr($group)
+  {
+    switch ($group)
+    {
+      case User::AERODYNAMICS:
+        return "Aerodynamics";
+        break;
+      case User::CHASSIS:
+        return "Chassis";
+        break;
+      case User::ELECTRONICS;
+        return "Electronics";
+        break;
+      case User::OPERATIONS:
+        return "Aerodynamics";
+        break;
+      case User::POWERTRAIN:
+        return "Powertrain";
+        break;
+      case User::SUSPENSION:
+        return "Suspension";
+        break;
+      default:
+        return "Other";
+    }
+  }
+
+  public static function getGroups()
+  {
+    return array(User::AERODYNAMICS, User::CHASSIS, User::ELECTRONICS, User::OPERATIONS, User::POWERTRAIN, User::SUSPENSION, User::OTHER);
+  }
 
 
   /**

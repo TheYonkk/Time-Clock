@@ -8,10 +8,12 @@ class EventView extends View
 {
 
     private $eventid = null;
+    private $msg = null;
 
     private $filterStart = null;
     private $filterEnd = null;
     private $filterUserID = null;
+
 
     public function __construct(Site $site, $get)
     {
@@ -19,6 +21,9 @@ class EventView extends View
 
         if (isset($get["id"]) && !is_null($get["id"])){
             $this->eventid = strip_tags($get["id"]);
+            $this->setTitle("Edit Event");
+        } else {
+            $this->setTitle("New Event");
         }
 
         if (isset($get["filterStart"])){
@@ -30,10 +35,16 @@ class EventView extends View
         if (isset($get["filterUserID"])){
             $this->filterUserID = strip_tags($get["filterUserID"]);
         }
+        if (isset($get["filterUserID"])){
+            $this->filterUserID = strip_tags($get["filterUserID"]);
+        }
+        if (isset($get["msg"])){
+            $this->msg = strip_tags($get["msg"]);
+        }
 
 
 
-        $this->setTitle("Edit Event");
+
 
         $root = $site->getRoot();
         $this->addLink("$root/admin.php", "Home");
@@ -61,11 +72,11 @@ class EventView extends View
             $notes = $event->getNotes();
             $id = $this->eventid;
         } else {
-            $name = "Error";
+            $name = "";
             $email = "";
             $in = 0;
             $out = 0;
-            $id = 0;
+            $id = -1;
             $notes = "";
         }
 
@@ -81,6 +92,15 @@ class EventView extends View
             $outStr = "";
         }
 
+        // if "delete" was in the get, alert the user for a confirmation, then add "Confirm"
+        // to the delete submission button
+        $deleteConfirm = null;
+        $deleteConfirmPost = null;
+        if ($this->msg === "delete"){
+            $deleteConfirm = "<div class='alert alert-danger' role='alert'>Are you sure that you want to permanently delete this event? This can not be undone.</div>";
+            $deleteConfirmPost = "Confirmed";
+        }
+
         $html = "<div class='row justify-content-center'>";
         $html .= "";
 
@@ -88,6 +108,18 @@ class EventView extends View
         $filterEnd = $this->filterEnd;
         $filterUserID = $this->filterUserID;
 
+        // if there was no user id, this is a new event, otherwise load edit user header
+        if ($id != -1){
+            $nameBlock = "<h2 class='h4 mt-2'>$name</h2><h3 class='h5 text-secondary'>$email</h3>";
+        } else {
+            $nameBlock = "<select class='form-select form-select-lg' name='newUserID' id='newUserID'>";
+
+            foreach ($users->getUsers() as $user){
+                $nameBlock .= "<option value='" . $user->getID() ."'>" . $user->getName() . "</option>";
+            }
+
+            $nameBlock .= "<select>";
+        }
 
         $html .= <<<HTML
 <form class='col-4 text-center' method="post" action="post/event.php">
@@ -99,8 +131,7 @@ class EventView extends View
     <input type="hidden" name="filterEnd" value="$filterEnd">
     <input type="hidden" name="filterUserID" value="$filterUserID">
     
-    <h2 class="h4 mt-2">$name</h2>
-    <h3 class="h5 text-secondary">$email</h3>
+    $nameBlock
     
     <div class="row mt-4">
         <div class="col-lg-6 col-12 form-group mt-1">
@@ -118,9 +149,14 @@ class EventView extends View
         <textarea class="form-control" name="notes" rows="5">$notes</textarea>
     </div>
     
+    <div class="form-group mt-3">
+        $deleteConfirm
+        <button type="submit" class="btn btn-outline-danger my-0 py-0" name="delete" value="delete$deleteConfirmPost" id="delete">Delete Event</button>
+    </div>
+    
     <div class="form-group mt-5">
         <button type="submit" class="btn btn-success">Submit</button>
-        <input type="button" class="btn btn-danger" onclick="history.back()" value="Cancel"></input>
+        <input type="button" class="btn btn-danger" onclick="history.back()" value="Cancel" />
     </div>
 </form>
 HTML;
@@ -128,7 +164,5 @@ HTML;
       return $html;
 
     }
-
-
 
 }

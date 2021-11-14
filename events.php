@@ -20,6 +20,7 @@ if(!$view->protect($site, $user)) {
     <?php
     echo $view->header();
     echo $view->present();
+    echo $view->boostrapJS();
     ?>
 
 </div>
