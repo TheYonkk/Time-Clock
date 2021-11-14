@@ -79,30 +79,16 @@ class UserView extends View
         <select class="form-control" id="group" name="group">
 HTML;
 
-        // formula as default, too
-        if ($group === User::FORMULA || $group === ""){
-            $html .= "<option selected>Formula</option>";
-        } else {
-            $html .= "<option>Formula</option>";
+        foreach (User::getGroups() as $userGroup)
+        {
+          print($userGroup . "  ");
+          if ($group === $userGroup){
+            $html .= "<option selected>" . User::getGroupStr($userGroup) . "</option>";
+          } else {
+            $html .= "<option>" . User::getGroupStr($userGroup) . "</option>";
+          }
         }
 
-        if ($group === User::BAJA){
-            $html .= "<option selected>Baja</option>";
-        } else {
-            $html .= "<option>Baja</option>";
-        }
-
-        if ($group === User::SOLAR){
-            $html .= "<option selected>Solar</option>";
-        } else {
-            $html .= "<option>Solar</option>";
-        }
-
-        if ($group === User::OTHER){
-            $html .= "<option selected>Other</option>";
-        } else {
-            $html .= "<option>Other</option>";
-        }
 
         $html .= <<<HTML
         </select>

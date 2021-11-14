@@ -72,15 +72,7 @@ HTML;
                 $rolestr = "User";
             }
 
-            if ($group === User::FORMULA){
-                $groupstr = "Formula";
-            } else if ($group === User::BAJA){
-                $groupstr = "Baja";
-            } else if ($group === User::SOLAR){
-                $groupstr = "Solar";
-            } else {
-                $groupstr = "Other";
-            }
+            $groupstr = User::getGroupStr($group);
 
             $html .= <<<HTML
         <tr>
