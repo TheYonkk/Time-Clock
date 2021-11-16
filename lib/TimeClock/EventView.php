@@ -67,6 +67,7 @@ class EventView extends View
             $user = $users->get($event->getUserID());
             $name = $user->getName();
             $email = $user->getEmail();
+            $userid = $user->getId();
             $in = $event->getClockIn();
             $out = $event->getClockOut();
             $forgot = $event->didForget();
@@ -116,6 +117,7 @@ class EventView extends View
         // if there was no user id, this is a new event, otherwise load edit user header
         if ($id != -1){
             $nameBlock = "<h2 class='h4 mt-2'>$name</h2><h3 class='h5 text-secondary'>$email</h3>";
+            $nameBlock .= "<a class='btn btn-outline-primary my-0 py-0' href='$root/user.php?id=$userid'>Edit user</a>";
         } else {
             $nameBlock = "<select class='form-select form-select-lg' name='newUserID' id='newUserID'>";
 
