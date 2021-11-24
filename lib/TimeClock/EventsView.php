@@ -149,6 +149,7 @@ class EventsView extends View {
                 <th scope="col">&nbsp;</th>
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
+                <th scope="col">Group</th>
                 <th scope="col">Time in</th>
                 <th scope="col">Time out</th>
                 <th scope="col">Total time</th>
@@ -169,6 +170,7 @@ HTML;
             $id = $event->getID();
             $name = $user->getName();
             $email = $user->getEmail();
+            $group = User::getGroupStr($user->getGroup());
             $startStr = $event->getClockInStr();
             $endStr = $event->getClockOutStr();
             $durationStr = $event->getDurationStr();
@@ -190,6 +192,7 @@ HTML;
             </div>
             <td>$name</td>
             <td>$email</td>
+            <td>$group</td>
             <td>$startStr</td>
             <td>$endStr</td>
             <td>$durationStr</td>
